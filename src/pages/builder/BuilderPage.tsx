@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { addApp } from "@/utils/apps";
 import { useState } from "react";
 
 const BuilderPage = () => {
@@ -17,11 +18,11 @@ const BuilderPage = () => {
       return;
     }
 
+    const app = addApp(appName.trim());
     toast({
       title: "App created",
-      description: `App "${appName}" created!`,
+      description: `App "${app.name}" created!`,
     });
-
     setAppName("");
   };
 
