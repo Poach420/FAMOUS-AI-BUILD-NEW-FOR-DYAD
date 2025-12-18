@@ -1,4 +1,6 @@
 import { MadeWithDyad } from "@/components/made-with-dyad";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -8,6 +10,13 @@ const Index = () => {
         <p className="text-xl text-gray-600">
           A fresh start to create, deploy, and scale custom applications without lock-ins or dependencies.
         </p>
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <Button asChild><Link to="/dashboard">Go to Dashboard</Link></Button>
+          <Button asChild variant="secondary"><Link to="/builder">Open Builder</Link></Button>
+          <Button asChild variant="secondary"><Link to="/deployments">View Deployments</Link></Button>
+          <Button asChild variant="outline"><Link to="/pricing">See Pricing</Link></Button>
+          <Button asChild variant="outline"><Link to="/settings">Settings</Link></Button>
+        </div>
       </div>
       <MadeWithDyad />
     </div>
