@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { toast } from "@/components/ui/use-toast";
 import { getApps, type AppRecord } from "@/utils/apps";
+import { showSuccess } from "@/utils/toast";
 
 type DeploymentRecord = {
   id: string;
@@ -32,7 +32,7 @@ const DeploymentsPage = () => {
       startedAt: Date.now(),
     };
     setDeployments((prev) => [record, ...prev]);
-    toast({ title: "Deployment started", description: `App "${app.name}" is now deployed!` });
+    showSuccess(`App "${app.name}" is now deployed!`);
   };
 
   return (

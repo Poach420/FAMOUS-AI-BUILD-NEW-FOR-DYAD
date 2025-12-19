@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "@/components/ui/use-toast";
+import { showSuccess } from "@/utils/toast";
 
 type Plan = {
   name: string;
@@ -31,10 +31,7 @@ const plans: Plan[] = [
 
 const PricingPage = () => {
   const handleChoose = (plan: Plan) => {
-    toast({
-      title: `Chosen: ${plan.name}`,
-      description: `You selected the ${plan.name} plan (${plan.price}).`,
-    });
+    showSuccess(`Chosen: ${plan.name} (${plan.price})`);
   };
 
   return (
@@ -42,7 +39,7 @@ const PricingPage = () => {
       <div className="mb-6 text-center">
         <h1 className="text-3xl font-bold">Pricing</h1>
         <p className="text-gray-600 mt-2">
-          Pick a plan that fits your team’s needs.
+          Pick a plan that fits your team's needs.
         </p>
       </div>
 

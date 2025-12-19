@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { getApps, clearApps, removeApp, type AppRecord } from "@/utils/apps";
-import { toast } from "@/components/ui/use-toast";
+import { showSuccess } from "@/utils/toast";
 
 const DashboardPage = () => {
   const [apps, setApps] = useState<AppRecord[]>([]);
@@ -20,13 +20,13 @@ const DashboardPage = () => {
   const handleClear = () => {
     clearApps();
     refresh();
-    toast({ title: "Cleared", description: "All apps were removed." });
+    showSuccess("All apps were removed.");
   };
 
   const handleRemove = (id: string) => {
     removeApp(id);
     refresh();
-    toast({ title: "Removed", description: "App deleted." });
+    showSuccess("App deleted.");
   };
 
   return (
@@ -35,7 +35,7 @@ const DashboardPage = () => {
         <CardHeader className="flex flex-row items-center justify-between gap-4">
           <div>
             <CardTitle>Dashboard</CardTitle>
-            <CardDescription>Apps you’ve created.</CardDescription>
+            <CardDescription>Apps you've created.</CardDescription>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="secondary">

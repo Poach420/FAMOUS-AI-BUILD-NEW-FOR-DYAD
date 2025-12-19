@@ -1,28 +1,21 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
 import { addApp } from "@/utils/apps";
 import { useState } from "react";
+import { showSuccess, showError } from "@/utils/toast";
 
 const BuilderPage = () => {
   const [appName, setAppName] = useState("");
 
   const handleCreateApp = () => {
     if (!appName.trim()) {
-      toast({
-        title: "App name required",
-        description: "Please enter a name before creating your app.",
-        variant: "destructive",
-      });
+      showError("App name required. Please enter a name before creating your app.");
       return;
     }
 
     const app = addApp(appName.trim());
-    toast({
-      title: "App created",
-      description: `App "${app.name}" created!`,
-    });
+    showSuccess(`App "${app.name}" created!`);
     setAppName("");
   };
 
