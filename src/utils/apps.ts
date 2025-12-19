@@ -4,7 +4,7 @@ export type AppRecord = {
   createdAt: number;
 };
 
-const STORAGE_KEY = "dn_apps";
+const STORAGE_KEY = "apps";
 
 export function getApps(): AppRecord[] {
   const raw = localStorage.getItem(STORAGE_KEY);
