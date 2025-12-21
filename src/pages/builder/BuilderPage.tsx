@@ -2,20 +2,36 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { addApp, clearApps } from "@/utils/apps";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { showSuccess, showError } from "@/utils/toast";
+import { Progress } from "@/components/ui/progress";
+import ChatBox from "@/components/ai/ChatBox";
+import CodeGenerator from "@/components/builder/CodeGenerator";
 
 const BuilderPage = () => {
   const [appName, setAppName] = useState("");
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let t: number | undefined;
+    if (progress > 0 && progress < 100) {
+      t = window.setTimeout(() => setProgress((p) => Math.min(100, p + 20)), 250);
+    }
+    return () => {
+      if (t) clearTimeout(t);
+    };
+  }, [progress]);
 
   const handleCreateApp = () => {
     if (!appName.trim()) {
       showError("App name required. Please enter a name before creating your app.");
       return;
     }
-
+    setProgress(10);
     const app = addApp(appName.trim());
+    setProgress(100);
     showSuccess(`App "${app.name}" created!`);
+    setTimeout(() => setProgress(0), 600);
     setAppName("");
   };
 
@@ -25,7 +41,7 @@ const BuilderPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 space-y-6">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Builder</CardTitle>
@@ -46,9 +62,18 @@ const BuilderPage = () => {
                 Clear Apps
               </Button>
             </div>
+            <div className="mt-4 space-y-2">
+              <p className="text-sm text-muted-foreground">Progress</p>
+              <Progress value={progress} />
+            </div>
           </form>
         </CardContent>
       </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ChatBox />
+        <CodeGenerator />
+      </div>
     </div>
   );
 };
