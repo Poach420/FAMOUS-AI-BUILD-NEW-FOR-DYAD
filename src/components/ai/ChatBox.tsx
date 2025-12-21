@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { showError } from "@/utils/toast";
+import { getSupabase, hasSupabase } from "@/lib/supabase";
 
 type ChatMessage = { id: string; role: "user" | "assistant"; content: string };
 
@@ -22,7 +23,7 @@ const ChatBox = () => {
   ]);
   const [input, setInput] = useState("");
 
-  const send = () => {
+  const send = async () => {
     const text = input.trim();
     if (!text) {
       showError("Please type a message.");
@@ -31,6 +32,23 @@ const ChatBox = () => {
     const user: ChatMessage = { id: `u-${Date.now()}`, role: "user", content: text };
     setMessages((prev) => [...prev, user]);
     setInput("");
+
+    if (hasSupabase) {
+      const supabase = getSupabase();
+      if (supabase) {
+        const { data, error } = await supabase.functions.invoke("ninja-chat", {
+          body: { prompt: text },
+        });
+        if (error) {
+          showError(error.message);
+        } else {
+          const assistantText = typeof data === "string" ? data : JSON.stringify(data);
+          const assistant: ChatMessage = { id: `a-${Date.now()}`, role: "assistant", content: assistantText };
+          setMessages((prev) => [...prev, assistant]);
+          return;
+        }
+      }
+    }
     setTimeout(() => {
       const assistant: ChatMessage = {
         id: `a-${Date.now()}`,
@@ -38,7 +56,7 @@ const ChatBox = () => {
         content: assistantReply(text),
       };
       setMessages((prev) => [...prev, assistant]);
-    }, 400);
+    }, 300);
   };
 
   return (

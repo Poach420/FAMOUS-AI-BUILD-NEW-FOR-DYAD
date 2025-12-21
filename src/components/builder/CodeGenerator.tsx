@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { showSuccess, showError } from "@/utils/toast";
+import { getSupabase, hasSupabase } from "@/lib/supabase";
 
 type GenType = "button" | "card" | "form" | "list";
 
@@ -25,12 +26,34 @@ const CodeGenerator = () => {
   const [prompt, setPrompt] = useState("");
   const [config, setConfig] = useState<GenConfig | null>(null);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     const text = prompt.trim();
     if (!text) {
       showError("Please enter a prompt to generate UI.");
       return;
     }
+
+    if (hasSupabase) {
+      const supabase = getSupabase();
+      if (supabase) {
+        const { data, error } = await supabase.functions.invoke("ninja-generate", {
+          body: { prompt: text },
+        });
+        if (error) {
+          showError(error.message);
+        } else {
+          try {
+            const cfg = typeof data === "string" ? JSON.parse(data) : data;
+            setConfig(cfg as GenConfig);
+            showSuccess("Generated component from Supabase function.");
+            return;
+          } catch {
+            showError("Invalid generator output format.");
+          }
+        }
+      }
+    }
+
     const cfg = generateConfig(text);
     setConfig(cfg);
     showSuccess("Generated component preview ready.");

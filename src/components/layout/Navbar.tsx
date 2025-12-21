@@ -1,6 +1,9 @@
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
+import AuthModal from "@/components/auth/AuthModal";
+import { useAuth } from "@/contexts/auth-context";
+import { useState } from "react";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -9,6 +12,9 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   ].join(" ");
 
 const Navbar = () => {
+  const { user, signOut } = useAuth();
+  const [authOpen, setAuthOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -29,12 +35,20 @@ const Navbar = () => {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" className="hidden sm:inline-flex">Sign In</Button>
+          {user ? (
+            <>
+              <span className="text-sm text-muted-foreground hidden sm:inline">Hi, {user.email ?? "User"}</span>
+              <Button variant="ghost" onClick={() => signOut()}>Sign Out</Button>
+            </>
+          ) : (
+            <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => setAuthOpen(true)}>Sign In</Button>
+          )}
           <Button asChild>
             <Link to="/builder">Get Started</Link>
           </Button>
         </div>
       </div>
+      <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
     </header>
   );
 };
