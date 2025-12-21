@@ -40,7 +40,7 @@ const ConfigurePanel = ({
     showSuccess("Configuration saved successfully");
   };
 
-  const updateConfig = (key: keyof ProjectConfig, value: any) => {
+  const updateConfig = <K extends keyof ProjectConfig>(key: K, value: ProjectConfig[K]) => {
     setConfig(prev => ({ ...prev, [key]: value }));
   };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +26,16 @@ const ChatBox = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [buildProgress, setBuildProgress] = useState(0);
+  const progressIntervalRef = useRef<number | undefined>();
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
+  }, []);
 
   const send = async () => {
     const text = input.trim();
@@ -50,6 +60,7 @@ const ChatBox = () => {
         return prev + 15;
       });
     }, 200);
+    progressIntervalRef.current = progressInterval;
 
     if (hasSupabase) {
       const supabase = getSupabase();

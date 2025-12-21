@@ -73,13 +73,13 @@ const BuilderPage = () => {
   };
 
   const handlePublish = (options: PublishOptions) => {
+    // TODO: Implement actual publishing logic with GitHub API integration
     console.log("Publishing with options:", options);
-    // Here you would integrate with actual publishing logic
   };
 
   const handleExport = () => {
+    // TODO: Implement actual export logic to create ZIP file
     console.log("Exporting project...");
-    // Here you would integrate with actual export logic
   };
 
   return (

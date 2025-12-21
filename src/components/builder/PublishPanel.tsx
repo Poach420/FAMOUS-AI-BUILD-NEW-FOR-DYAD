@@ -65,7 +65,7 @@ const PublishPanel = ({ onPublish, onExport }: PublishPanelProps) => {
             {/* Platform Selection */}
             <div className="space-y-2">
               <Label htmlFor="platform">Publish Platform</Label>
-              <Select value={platform} onValueChange={(value: any) => setPlatform(value)}>
+              <Select value={platform} onValueChange={(value) => setPlatform(value as PublishOptions['platform'])}>
                 <SelectTrigger id="platform">
                   <SelectValue placeholder="Select platform" />
                 </SelectTrigger>
