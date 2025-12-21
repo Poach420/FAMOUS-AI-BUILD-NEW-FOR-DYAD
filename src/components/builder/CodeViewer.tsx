@@ -1,15 +1,7 @@
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import jsx from 'react-syntax-highlighter/dist/esm/languages/prism/jsx';
-import typescript from 'react-syntax-highlighter/dist/esm/languages/prism/typescript';
-import css from 'react-syntax-highlighter/dist/esm/languages/prism/css';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-// Register languages
-SyntaxHighlighter.registerLanguage('jsx', jsx);
-SyntaxHighlighter.registerLanguage('typescript', typescript);
-SyntaxHighlighter.registerLanguage('css', css);
 
 interface CodeViewerProps {
   code?: string;
