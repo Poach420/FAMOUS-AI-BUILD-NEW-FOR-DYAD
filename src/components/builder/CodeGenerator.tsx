@@ -22,7 +22,95 @@ function generateConfig(prompt: string): GenConfig {
   return { type: "list", items: ["Alpha", "Bravo", "Charlie"] };
 }
 
-const CodeGenerator = () => {
+function generateCodeFromConfig(config: GenConfig): string {
+  switch (config.type) {
+    case "button":
+      return `import { Button } from "@/components/ui/button";
+
+const MyButton = () => {
+  return (
+    <Button onClick={() => alert("Button clicked!")}>
+      ${config.label}
+    </Button>
+  );
+};
+
+export default MyButton;`;
+    
+    case "card":
+      return `import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+
+const MyCard = () => {
+  return (
+    <Card className="max-w-md">
+      <CardHeader>
+        <CardTitle>${config.title}</CardTitle>
+        ${config.description ? `<CardDescription>${config.description}</CardDescription>` : ''}
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">
+          This is a generated Card component.
+        </p>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default MyCard;`;
+    
+    case "form":
+      return `import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const MyForm = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert("Form submitted!");
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex items-center gap-2">
+      <Input placeholder="${config.placeholder}" />
+      <Button type="submit">${config.submitLabel}</Button>
+    </form>
+  );
+};
+
+export default MyForm;`;
+    
+    case "list":
+      return `import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+
+const MyTable = () => {
+  const items = ${JSON.stringify(config.items, null, 2)};
+
+  return (
+    <Table className="max-w-md">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Item</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {items.map((item) => (
+          <TableRow key={item}>
+            <TableCell className="font-medium">{item}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};
+
+export default MyTable;`;
+  }
+}
+
+interface CodeGeneratorProps {
+  onGenerate?: (code: string, component: React.ReactNode) => void;
+}
+
+const CodeGenerator = ({ onGenerate }: CodeGeneratorProps) => {
   const [prompt, setPrompt] = useState("");
   const [config, setConfig] = useState<GenConfig | null>(null);
 
@@ -45,6 +133,8 @@ const CodeGenerator = () => {
           try {
             const cfg = typeof data === "string" ? JSON.parse(data) : data;
             setConfig(cfg as GenConfig);
+            const generatedCode = generateCodeFromConfig(cfg as GenConfig);
+            onGenerate?.(generatedCode, renderPreview(cfg as GenConfig));
             showSuccess("Generated component from Supabase function.");
             return;
           } catch {
@@ -56,20 +146,22 @@ const CodeGenerator = () => {
 
     const cfg = generateConfig(text);
     setConfig(cfg);
+    const generatedCode = generateCodeFromConfig(cfg);
+    onGenerate?.(generatedCode, renderPreview(cfg));
     showSuccess("Generated component preview ready.");
   };
 
-  const renderPreview = () => {
-    if (!config) return <p className="text-muted-foreground">No preview yet. Generate from a prompt.</p>;
-    switch (config.type) {
+  const renderPreview = (cfg: GenConfig | null = config) => {
+    if (!cfg) return <p className="text-muted-foreground">No preview yet. Generate from a prompt.</p>;
+    switch (cfg.type) {
       case "button":
-        return <Button onClick={() => showSuccess("Button clicked!")}>{config.label}</Button>;
+        return <Button onClick={() => showSuccess("Button clicked!")}>{cfg.label}</Button>;
       case "card":
         return (
           <Card className="max-w-md">
             <CardHeader>
-              <CardTitle>{config.title}</CardTitle>
-              {config.description && <CardDescription>{config.description}</CardDescription>}
+              <CardTitle>{cfg.title}</CardTitle>
+              {cfg.description && <CardDescription>{cfg.description}</CardDescription>}
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">This is a generated Card preview.</p>
@@ -79,8 +171,8 @@ const CodeGenerator = () => {
       case "form":
         return (
           <div className="flex items-center gap-2">
-            <Input placeholder={config.placeholder} />
-            <Button onClick={() => showSuccess("Submitted!")}>{config.submitLabel}</Button>
+            <Input placeholder={cfg.placeholder} />
+            <Button onClick={() => showSuccess("Submitted!")}>{cfg.submitLabel}</Button>
           </div>
         );
       case "list":
@@ -92,7 +184,7 @@ const CodeGenerator = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {config.items.map((item) => (
+              {cfg.items.map((item) => (
                 <TableRow key={item}>
                   <TableCell className="font-medium">{item}</TableCell>
                 </TableRow>
